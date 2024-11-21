@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OMG</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Orbitron", sans-serif;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw; /* Full viewport width */
+        height: 100vh; /* Full viewport height */
+        background: radial-gradient(
+          circle at top left,
+          rgba(73, 237, 0, 0.3),
+          rgba(0, 0, 0, 0.85)
+        );
+        align-items: center;
+        justify-content: center;
+        animation: zoomIn 0.5s ease forwards;
+      }
+
+      .modal-content {
+        background-color: #212121;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        border-radius: 0; /* Remove rounded corners */
+        text-align: center;
+        position: relative;
+        color: #e0e0e0;
+        box-shadow: none; /* Remove box shadow for fullscreen */
+        display: flex;
+        flex-direction: column;
+        padding: 0; /* Remove padding */
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.5em;
+        color: #49ed00;
+      }
+
+      .modal-header .close {
+        cursor: pointer;
+        font-size: 1.8em;
+        color: #49ed00;
+        margin-right: 20px;
+      }
+
+      .modal-header .close:hover {
+        color: rgba(73, 237, 0, 0.7);
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%; /* Full height of modal content */
+        border: none;
+        margin-top: 0; /* Remove top margin */
+        box-shadow: none; /* Remove shadow */
+      }
+
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top: 4px solid #49ed00;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 0.8s linear infinite;
+        margin: 20px auto;
+        display: none;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .nav-buttons {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+        margin-bottom: 30px;
+        gap: 30px;
+      }
+
+      .arrow-btn {
+        cursor: pointer;
+        font-size: 2em;
+        color: #ffffff;
+        background: none;
+        border: none;
+        transition: color 0.3s;
+      }
+
+      .arrow-btn:hover {
+        color: #49ed00;
+      }
+
+      .go-btn {
+        cursor: pointer;
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.3em;
+        color: #ffffff;
+        background-color: #333;
+        padding: 10px 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 0 8px rgba(73, 237, 0, 0.3);
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .go-btn:hover {
+        background-color: #49ed00;
+        color: #1a1a1a;
+      }
+
+      .fallback {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em; /* Increased font size for impact */
+        color: #ffffff; /* Keep the text color white for visibility */
+        text-align: center;
+        padding: 20px;
+        gap: 10px;
+        flex-direction: column;
+        animation: fadeIn 1s ease forwards; /* Fade-in effect */
+        text-shadow: 0 0 5px rgba(73, 237, 0, 0.6),
+          0 0 10px rgba(73, 237, 0, 0.4), 0 0 15px rgba(73, 237, 0, 0.2); /* Glowing effect */
+        transform: translateY(10px); /* Start slightly lower for effect */
+        animation: bounce 2s infinite; /* Bounce animation */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px); /* Bounce effect */
+        }
+        60% {
+          transform: translateY(-5px); /* Bounce effect */
+        }
+      }
+
+      .show-modal-btn {
+        cursor: pointer;
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.5em; /* Increased font size for impact */
+        color: #ffffff;
+        background-color: transparent; /* Make background transparent */
+        padding: 10px 20px;
+        border: 2px solid #49ed00; /* Green border */
+        border-radius: 10px; /* Slightly larger border radius */
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 0 10px rgba(73, 237, 0, 0.5); /* Glow effect */
+        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition */
+        animation: pulse 1.5s infinite; /* Pulsating effect */
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1); /* Normal size */
+          box-shadow: 0 0 15px rgba(73, 237, 0, 0.5); /* Glow effect */
+        }
+        50% {
+          transform: scale(1.05); /* Slightly larger */
+          box-shadow: 0 0 25px rgba(73, 237, 0, 0.7); /* Stronger glow */
+        }
+      }
+
+      .show-modal-btn:hover {
+        color: #49ed00; /* Change text color to match the border */
+        background-color: rgba(
+          73,
+          237,
+          0,
+          0.2
+        ); /* Add a light green background on hover */
+        transform: scale(1.1); /* Larger on hover */
+        box-shadow: 0 0 20px rgba(73, 237, 0, 0.8),
+          0 0 30px rgba(73, 237, 0, 0.5); /* Stronger glow on hover */
+        border-color: #49ed00; /* Keep the border color the same for visibility */
+      }
+    </style>
+    <script>
+      let links = [
+        "https://www.profitablecpmrate.com/jnvhyd2huh?key=301cfe0ffa729c3dd4f75e18645e8bb3", // Dito ilalagay Direct Link
+        "https://www.profitablecpmrate.com/v2b34wwf?key=473bd47c9be2394d0f9060d12685b30c", // Dito ilalagay Direct Link
+        "https://www.profitablecpmrate.com/scybn2eij?key=8acb9dc3c0711c89bbb821725c92de1e", // Dito ilalagay Direct Link
+        "https://www.profitablecpmrate.com/phaz3693i3?key=1f74634b1c013993307d496a31079d7a", // Dito ilalagay Direct Link
+      ];
+      let currentIndex = 0;
+      let autoNavigateInterval;
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function refreshPage(interval = 250000) {
+        setInterval(() => {
+          location.reload();
+        }, interval);
+      }
+
+      function showLink(index) {
+        const iframe = document.getElementById("modalIframe");
+        const modal = document.getElementById("myModal");
+        const spinner = document.getElementById("spinner");
+        iframe.src = links[index];
+        modal.style.display = "flex";
+        spinner.style.display = "block";
+        iframe.onload = () => {
+          spinner.style.display = "none";
+        };
+        clearInterval(autoNavigateInterval);
+        autoNavigateInterval = setInterval(() => {
+          navigate(1);
+        }, Math.floor(Math.random() * (40000 - 30000 + 1) + 30000));
+      } // <-- Missing closing brace added here
+
+      function navigate(direction) {
+        currentIndex = (currentIndex + direction + links.length) % links.length;
+        showLink(currentIndex);
+      }
+
+      function goToSite() {
+        window.open(links[currentIndex], "_blank");
+      }
+
+      function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+        document.getElementById("modalIframe").src = "";
+        document.getElementById("fallback").style.display = "flex";
+        clearInterval(autoNavigateInterval);
+      }
+
+      function reopenModal() {
+        showLink(currentIndex);
+      }
+
+      window.onload = function () {
+        shuffleArray(links);
+        refreshPage();
+        showLink(currentIndex);
+      };
+    </script>
+  </head>
+
+  <body>
+    <div class="modal" id="myModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>Explore Dimensions</span>
+          <span class="close" onclick="closeModal()">×</span>
+        </div>
+        <div class="spinner" id="spinner"></div>
+        <iframe id="modalIframe" src=""></iframe>
+        <div class="nav-buttons">
+          <button class="arrow-btn" onclick="navigate(-1)">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <button class="go-btn" onclick="goToSite()">
+            Go <i class="fas fa-door-open"></i>
+          </button>
+          <button class="arrow-btn" onclick="navigate(1)">
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="fallback" id="fallback">
+      <p>The journey awaits. Click below to explore the next destination!</p>
+      <button class="show-modal-btn" onclick="reopenModal()">
+        <i class="fas fa-eye"></i> Enter Portal
+      </button>
+    </div>
+  </body>
+</html>
